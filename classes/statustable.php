@@ -218,7 +218,7 @@ class statustable extends \table_sql {
         $this->define_headers(array('username', 'name', 'timedetect', 'suspendin', 'action'));
 
         $suspendinsql = '('.config::get('smartdetect_suspendafter') .
-                ' - (UNIX_TIMESTAMP() - GREATEST(u.firstaccess, u.lastaccess, u.timemodified))) AS suspendin,';
+                ' - (? - GREATEST(u.firstaccess, u.lastaccess, u.timemodified))) AS suspendin,';
         $fields = 'u.id,u.username,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
                 ' AS name,u.lastlogin,u.firstaccess,u.lastaccess,u.timemodified,u.suspended,u.deleted,' .
                 'GREATEST(u.firstaccess, u.lastaccess, u.timemodified) AS timedetect,'.
@@ -227,7 +227,7 @@ class statustable extends \table_sql {
 
         list($where, $params) = util::get_suspension_query(false);
         list($where2, $params2) = util::get_suspension_query(true);
-        parent::set_sql($fields, '{user} u', "({$where}) OR ({$where2})", array_merge($params, $params2));
+        parent::set_sql($fields, '{user} u', "({$where}) OR ({$where2})", array_merge([time()], $params, $params2));
         $this->out($pagesize, $useinitialsbar);
     }
 
@@ -244,7 +244,7 @@ class statustable extends \table_sql {
         $this->define_headers(array('username', 'name', 'timedetect', 'deletein', 'action'));
 
         $deleteinsql = '('.config::get('cleanup_deleteafter') .
-                ' - (UNIX_TIMESTAMP() - u.timemodified)) AS deletein,';
+                ' - (? - u.timemodified)) AS deletein,';
         $fields = 'u.id,u.username,' . $DB->sql_fullname('u.firstname', 'u.lastname') .
                 ' AS name,u.lastlogin,u.firstaccess,u.lastaccess,u.timemodified,u.suspended,u.deleted,'.
                 'GREATEST(u.firstaccess, u.lastaccess, u.timemodified) AS timedetect,'.
@@ -253,7 +253,7 @@ class statustable extends \table_sql {
 
         list($where, $params) = util::get_deletion_query(false);
         list($where2, $params2) = util::get_deletion_query(true);
-        parent::set_sql($fields, '{user} u', "({$where}) OR ({$where2})", array_merge($params, $params2));
+        parent::set_sql($fields, '{user} u', "({$where}) OR ({$where2})", array_merge([time()], $params, $params2));
         $this->out($pagesize, $useinitialsbar);
     }
 

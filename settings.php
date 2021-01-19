@@ -27,6 +27,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * */
+
+use totara_core\quickaccessmenu\menu\admin;
+
 defined('MOODLE_INTERNAL') || die('moodle_internal not defined');
 
 if ($hassiteconfig) {
@@ -110,8 +113,7 @@ if ($hassiteconfig) {
 
     // Example CSV.
     $urldownloadcsv = new \moodle_url($CFG->wwwroot . '/admin/tool/usersuspension/assets/example.csv');
-    $temp->add(new admin_setting_description('tool_usersuspension/csvdelimiter',
-            get_string('download-sample-csv', 'tool_usersuspension'),
+    $temp->add(new admin_setting_heading('tool_usersuspension/csvdelimiter', '',
             '<a href="' . $urldownloadcsv . '" target="_blank">' .
             get_string('download-sample-csv', 'tool_usersuspension') . '</a>'));
 
@@ -168,6 +170,6 @@ if ($hassiteconfig) {
     $ADMIN->add('tools', $temp);
 }
 
-$ADMIN->add('accounts', new admin_externalpage('toolusersuspension', get_string('pluginname', 'tool_usersuspension'),
+$ADMIN->add('users', new admin_externalpage('toolusersuspension', get_string('pluginname', 'tool_usersuspension'),
     "{$CFG->wwwroot}/{$CFG->admin}/tool/usersuspension/view/exclude.php", 'moodle/user:update'
 ));

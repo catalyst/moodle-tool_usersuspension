@@ -153,6 +153,49 @@ class util {
     }
 
     /**
+     * Warns inactive users that they will be suspended soon. This must be run *AFTER* user suspension is done,
+     * or it will email suspended users if this is the first run.
+     */
+    static final public function warn_users_of_suspension() {
+        global $DB;
+
+        if (!(bool)config::get('enabled')) {
+            return false;
+        }
+        if (!(bool)config::get('enablesmartdetect')) {
+            return false;
+        }
+        // Run in parallel with the suspensions.
+        $lastrun = static::get_lastrun_config('smartdetect', 0, true);
+        $deltatime = time() - $lastrun;
+        if ($deltatime < config::get('smartdetect_interval')) {
+            return false;
+        }
+
+        // Do nothing if warningtime is 0
+        $warningtime = (int)config::get('smartdetect_warninginterval');
+        if ($warningtime <= 0) {
+            return false;
+        }
+
+        // Get the query for users to warn.
+        $warningthreshold = (time() - (int)config::get('smartdetect_suspendafter')) + $warningtime;
+        list($where, $params) = static::get_suspension_query(true, $warningthreshold);
+        $sql = "SELECT * FROM {user} u WHERE $where";
+        $users = $DB->get_records_sql($sql, $params);
+        foreach ($users as $user) {
+            // Check whether the user was already warned.
+            if ((get_user_preferences('tool_usersuspension_warned', false, $user))) {
+                continue;
+            }
+
+            static::process_user_warning_email($user);
+            // Mark the user as warned. This will be reset on their first successful login post warning.
+            set_user_preference('tool_usersuspension_warned', true, $user);
+        }
+    }
+
+    /**
      * Deletes suspended users according to configuration settings.
      *
      * @return boolean
@@ -377,12 +420,13 @@ class util {
      *          If false, this returns the query for users that are not past their
      *          date of suspension yet. The latter can be used for statistics on
      *          when users would get suspended.
+     * @param int $customtime A custom timestamp to perform the comparison against.
      * @return array A list containing the constructed where part of the sql and an array of parameters.
      */
-    public static function get_suspension_query($pastsuspensiondate = true) {
+    public static function get_suspension_query($pastsuspensiondate = true, $customtime = null) {
         global $CFG;
         $detectoperator = $pastsuspensiondate ? '<' : '>';
-        $timecheck = time() - (config::get('smartdetect_suspendafter'));
+        $timecheck = !empty($customtime) ? $customtime : time() - (config::get('smartdetect_suspendafter'));
         $where = "u.confirmed = 1 AND u.suspended = 0 AND u.deleted = 0 AND u.mnethostid = ? ";
         $where .= "AND (";
         $where .= "(u.lastaccess = 0 AND u.firstaccess > 0 AND u.firstaccess $detectoperator ?)";
@@ -515,6 +559,27 @@ class util {
             $messagehtml = get_string_manager()->get_string('email:user:suspend:manual:body',
                     'tool_usersuspension', $a, $user->lang);
         }
+        $messagetext = format_text_email($messagehtml, FORMAT_HTML);
+        return email_to_user($user, $from, $subject, $messagetext, $messagehtml);
+    }
+
+    /**
+     * Send an e-mail due to a user facing suspension due to inactivity.
+     *
+     * @param \stdClass $user
+     * @return void
+     */
+    public static function process_user_warning_email($user) {
+        // Prepare and send email.
+        $from = \core_user::get_support_user();
+        $a = new \stdClass();
+        $a->name = fullname($user);
+        $a->warningperiod = static::format_timespan(config::get('smartdetect_suspendafter'));
+        $a->contact = $from->email;
+        $a->signature = fullname($from);
+        $subject = get_string('email:user:warning:subject', 'tool_usersuspension', $a);
+        $messagehtml = get_string('email:user:warning:body', 'tool_usersuspension', $a);
+
         $messagetext = format_text_email($messagehtml, FORMAT_HTML);
         return email_to_user($user, $from, $subject, $messagetext, $messagehtml);
     }

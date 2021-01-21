@@ -75,6 +75,8 @@ $string['setting:smartdetect_interval'] = 'Smart detect interval';
 $string['setting:desc:smartdetect_interval'] = 'Sets interval at which smart detection runs';
 $string['setting:smartdetect_suspendafter'] = 'Inactivity suspension interval';
 $string['setting:desc:smartdetect_suspendafter'] = 'Sets interval at which users are suspended when inactive';
+$string['setting:smartdetect_warninginterval'] = 'Warning period';
+$string['setting:desc:smartdetect_warninginterval'] = 'Sets the time before suspension that a user receives a warning message about the impending suspension.';
 $string['suspensionsettingscleanup'] = 'Cleanup';
 $string['suspensionsettingscleanupdesc'] = 'Configure the cleanup settings below.<br/>
 The cleanup process is here to further automate cleaning up users, meaning suspended user accounts will get deleted
@@ -158,6 +160,11 @@ please contact {$a->contact}</p>
 $string['email:user:delete:subject'] = 'Your account has been removed';
 $string['email:user:delete:body'] = '<p>Dear {$a->name}</p>
 <p>You account has been removed after having been suspended for {$a->timesuspended}</p>
+<p>Regards<br/>{$a->signature}</p>';
+$string['email:user:warning:subject'] = 'Your account will soon be suspended';
+$string['email:user:warning:body'] = '<p>Dear {$a->name}</p>
+<p>Your account will be suspended in {$a->warningperiod} due to inactivity on the platform.</p>
+<p>To prevent this from occuring, log into the system in the next {$a->warningperiod}.</p>
 <p>Regards<br/>{$a->signature}</p>';
 $string['form:static:uploadfile:desc'] = 'Upload your user suspension file here<br/>
 The uploaded CSV file can be configured as follows:<br/>

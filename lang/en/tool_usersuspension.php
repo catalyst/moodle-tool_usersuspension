@@ -243,3 +243,7 @@ $string['setting:desc:unsuspenduploadfilename'] = 'Set filename of the uploaded 
 $string['page:view:notifications.php:introduction'] = 'This tab displays any detected potential problems with your user suspension configuration.';
 $string['tab:notifications'] = 'Configuration check';
 $string['notifications:allok'] = 'Your configuration looks correct. There seem to be no detected global configuration issues.';
+
+// Access strings.
+$string['usersuspension:administration'] = 'User suspension administration';
+$string['usersuspension:viewstatus'] = 'View user suspension status';

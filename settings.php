@@ -173,8 +173,8 @@ if ($hassiteconfig) {
             60 * 86400, 86400));
 
     $ADMIN->add('tools', $temp);
-}
 
-$ADMIN->add('users', new admin_externalpage('toolusersuspension', get_string('pluginname', 'tool_usersuspension'),
-    "{$CFG->wwwroot}/{$CFG->admin}/tool/usersuspension/view/exclude.php", 'moodle/user:update'
-));
+    $ADMIN->add('users', new admin_externalpage('toolusersuspension', get_string('pluginname', 'tool_usersuspension'),
+        "{$CFG->wwwroot}/{$CFG->admin}/tool/usersuspension/view/exclude.php", 'moodle/user:update'
+    ));
+}

@@ -574,7 +574,7 @@ class util {
         $from = \core_user::get_support_user();
         $a = new \stdClass();
         $a->name = fullname($user);
-        $a->warningperiod = static::format_timespan(config::get('smartdetect_suspendafter'));
+        $a->warningperiod = static::format_timespan(config::get('smartdetect_warninginterval'));
         $a->contact = $from->email;
         $a->signature = fullname($from);
         $subject = get_string('email:user:warning:subject', 'tool_usersuspension', $a);

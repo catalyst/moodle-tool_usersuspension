@@ -30,8 +30,8 @@
 require_once(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toolusersuspension');
-$context       = \context_system::instance();
+core\setting\page\externalpage::setup(null, 'toolusersuspension');
+$context = \context_system::instance();
 
 $history = optional_param('history', 0, PARAM_INT);
 $thispageurl = new moodle_url('/' . $CFG->admin . '/tool/usersuspension/view/log.php', array('history' => $history));

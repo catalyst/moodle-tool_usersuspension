@@ -30,8 +30,8 @@
 require_once(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toolusersuspension');
-$context       = \context_system::instance();
+core\setting\page\externalpage::setup(null, 'toolusersuspension');
+$context = \context_system::instance();
 
 require_capability('tool/usersuspension:administration', $context);
 require_capability('moodle/user:update', context_system::instance());

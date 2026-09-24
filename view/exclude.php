@@ -30,8 +30,8 @@
 require_once(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toolusersuspension');
-$context       = \context_system::instance();
+core\setting\page\externalpage::setup(null, 'toolusersuspension');
+$context = \context_system::instance();
 
 $thispageurl = new moodle_url('/' . $CFG->admin . '/tool/usersuspension/view/exclude.php', array());
 
